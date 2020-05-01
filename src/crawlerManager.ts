@@ -1,14 +1,15 @@
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import { Crawler, Proxy } from '@Types';
-import { Article } from '@Models';
-import { crawlerConfig } from '@Config';
-import { takeScreenShot, cleanPageStyle, getCrawler, useProxy } from '@Utils';
 import { uploadToS3 } from '@/awsS3Manager';
 import { acquireProxy } from '@/proxyPool';
+import { crawlerConfig } from '@Config';
+import { Article } from '@Models';
+import { DiamondCrawler, Proxy } from '@Types';
+import { cleanPageStyle, getCrawler, takeScreenShot, useProxy } from '@Utils';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 import { Page } from 'puppeteer';
+import { Crawler } from './types/Crawler';
 
-export async function crawlPage(url: string): Promise<Article> {
+export async function crawlArticle(url: string): Promise<Article> {
   const crawler = await getCrawler(url);
   if (crawler === null) {
     throw new Error('Crawler for this URL cannot be found.');
@@ -30,14 +31,18 @@ export async function crawlPage(url: string): Promise<Article> {
   await urlPage.setViewport({ width: 1440, height: 768 });
   let pageDeleted = false;
 
+  // Post processing
   try {
-    const [article, crawledSuccessfully] = await crawler.crawlArticle(urlPage, url);
+    const [article, crawledSuccessfully] = await crawler.crawlArticle(
+      urlPage,
+      url
+    );
 
     if (article !== null && crawledSuccessfully) {
-      url = article.url;
-
       if (crawlerConfig.takeScreenshot) {
-        const filename = `${encodeURIComponent(url)}_${Math.floor(Date.now() / 60000)}`;
+        const filename = `${encodeURIComponent(url)}_${Math.floor(
+          Date.now() / 60000
+        )}`;
 
         let [file, p] = await takeScreenShot(urlPage, filename);
         const fileKey = await uploadToS3({
@@ -75,15 +80,19 @@ export async function crawlPage(url: string): Promise<Article> {
 }
 
 export async function getCrawlingTask(crawler: Crawler): Promise<Article[]> {
-  const page = await crawler.puppeteerPool.acquire();
-  const urlList = await crawler.getArticleList(page);
-  await crawler.puppeteerPool.destroy(page);
+  if (crawler instanceof DiamondCrawler) {
+    const page = await crawler.puppeteerPool.acquire();
+    const urlList = await crawler.getArticleList(page);
+    await crawler.puppeteerPool.destroy(page);
 
-  return Promise.all(urlList.map((url: string) => crawlPage(url)));
+    return Promise.all(urlList.map((url: string) => crawlArticle(url)));
+  }
+  return;
 }
-
 export async function crawlAll(): Promise<void> {
-  const tasks = global.crawlers.map((crawler: Crawler) => getCrawlingTask(crawler));
+  const tasks = global.crawlers.map((crawler: DiamondCrawler) =>
+    getCrawlingTask(crawler)
+  );
 
   try {
     await Promise.all(tasks);
@@ -93,22 +102,26 @@ export async function crawlAll(): Promise<void> {
 }
 
 export async function initializeCrawlerManager(crawl = true): Promise<void> {
-  const crawlers: Crawler[] = [];
+  const crawlers: DiamondCrawler[] = [];
   global.domainToCrawlerMap = {};
 
   const dirs = await fs.readdir(path.join(__dirname, 'sites'));
   for (const dir of dirs) {
     let sites = await fs.readdir(path.join(__dirname, 'sites', dir));
-    sites = sites.filter(site => site.endsWith('.js'));
+    sites = sites.filter((site) => site.endsWith('.js'));
+
+    // Built-in crawlers
     for (const site of sites) {
-      const siteExports = await import(path.join(__dirname, 'sites', dir, site));
+      const siteExports = await import(
+        path.join(__dirname, 'sites', dir, site)
+      );
       for (const siteExport in siteExports) {
         if (typeof siteExports[siteExport] === 'function') {
           try {
             const crawler = new siteExports[siteExport]();
-            if (crawler instanceof Crawler) {
+            if (crawler instanceof DiamondCrawler) {
               await crawler.init();
-              crawlers.push(crawler as Crawler);
+              crawlers.push(crawler as DiamondCrawler);
               for (const domain of crawler.domains) {
                 global.domainToCrawlerMap[domain] = crawler;
               }
@@ -117,6 +130,8 @@ export async function initializeCrawlerManager(crawl = true): Promise<void> {
         }
       }
     }
+
+    // TODO: RssHub
   }
 
   global.crawlers = crawlers;

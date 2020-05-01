@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe } from '@Utils';
 import { Page } from 'puppeteer';
@@ -8,7 +8,7 @@ export const bjNewsComCn: SiteObj = {
   domains: ['www.bjnews.com.cn'],
 };
 
-export class BJNewsComCnCrawler extends Crawler {
+export class BJNewsComCnCrawler extends DiamondCrawler {
   site = bjNewsComCn;
 
   async crawlArticle(page: Page, url: string): Promise<[Article, boolean]> {

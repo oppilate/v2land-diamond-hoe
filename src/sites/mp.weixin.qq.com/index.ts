@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL } from '@Utils';
 import { Page } from 'puppeteer';
@@ -13,7 +13,7 @@ export const mpWeixinQQCom: SiteObj = {
   domains: ['mp.weixin.qq.com'],
 };
 
-export class MpWeixinQQComCrawler extends Crawler {
+export class MpWeixinQQComCrawler extends DiamondCrawler {
   site = mpWeixinQQCom;
 
   async crawlArticle(page: Page, url: string): Promise<[Article, boolean]> {

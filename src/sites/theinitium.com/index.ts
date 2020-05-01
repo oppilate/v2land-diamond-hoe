@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe } from '@Utils';
 import { Page } from 'puppeteer';
@@ -9,7 +9,7 @@ export const theInitiumCom: SiteObj = {
   domains: ['www.theinitium.com', 'theinitium.com'],
 };
 
-export class TheInitiumCrawler extends Crawler {
+export class TheInitiumCrawler extends DiamondCrawler {
   site = theInitiumCom;
 
   async crawlArticle(page: Page, url: string): Promise<[Article, boolean]> {

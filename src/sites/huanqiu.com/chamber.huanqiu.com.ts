@@ -1,4 +1,4 @@
-import { Crawler } from '@Types';
+import { DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe, removeURLQuery } from '@Utils';
 import { Page } from 'puppeteer';
@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { huanqiuCom } from './index';
 
-export class ChamberHuanqiuComCrawler extends Crawler {
+export class ChamberHuanqiuComCrawler extends DiamondCrawler {
   site = huanqiuCom;
   domains = ['chamber.huanqiu.com'];
 

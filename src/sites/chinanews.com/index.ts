@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe, removeURLQuery, getCrawlerWithDomain } from '@Utils';
 import { Page } from 'puppeteer';
@@ -9,7 +9,7 @@ export const chinaNewsCom: SiteObj = {
   domains: ['www.chinanews.com', 'm.chinanews.com'],
 };
 
-export class ChinaNewsComCrawler extends Crawler {
+export class ChinaNewsComCrawler extends DiamondCrawler {
   site = chinaNewsCom;
   domains = ['www.chinanews.com'];
 
@@ -57,7 +57,7 @@ export class ChinaNewsComCrawler extends Crawler {
   }
 }
 
-export class MChinaNewsComCrawler extends Crawler {
+export class MChinaNewsComCrawler extends DiamondCrawler {
   site = chinaNewsCom;
   domains = ['m.chinanews.com'];
 

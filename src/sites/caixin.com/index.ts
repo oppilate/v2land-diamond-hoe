@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe, removeURLQuery } from '@Utils';
 import { Page } from 'puppeteer';
@@ -25,7 +25,7 @@ export const caixinCom: SiteObj = {
   ],
 };
 
-export class CaixinComCrawler extends Crawler {
+export class CaixinComCrawler extends DiamondCrawler {
   site = caixinCom;
   domains = _.without(caixinCom.domains, 'm.caixin.com');
 

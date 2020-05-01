@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe, removeURLQuery } from '@Utils';
 import { Page } from 'puppeteer';
@@ -40,7 +40,7 @@ export const huanqiuCom: SiteObj = {
   ],
 };
 
-export class HuanqiuComCrawler extends Crawler {
+export class HuanqiuComCrawler extends DiamondCrawler {
   site = huanqiuCom;
   domains = [
     'www.huanqiu.com',

@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, safe } from '@Utils';
 import { Page, ElementHandle } from 'puppeteer';
@@ -15,7 +15,7 @@ export const news163Com: SiteObj = {
   ],
 };
 
-export class News163ComCrawler extends Crawler {
+export class News163ComCrawler extends DiamondCrawler {
   site = news163Com;
   useProxy = true;
 

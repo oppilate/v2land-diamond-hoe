@@ -1,4 +1,4 @@
-import { SiteObj, Crawler } from '@Types';
+import { SiteObj, DiamondCrawler } from '@Types';
 import { Article } from '@Models';
 import { checkArticleWithURL, removeURLQuery, safe, getCrawlerWithDomain } from '@Utils';
 import { Page } from 'puppeteer';
@@ -9,7 +9,7 @@ export const weiboCom: SiteObj = {
   domains: ['www.weibo.com', 'm.weibo.cn', 'card.weibo.com'],
 };
 
-export class WeiboComCrawler extends Crawler {
+export class WeiboComCrawler extends DiamondCrawler {
   site = weiboCom;
   domains = ['www.weibo.com'];
 
@@ -106,7 +106,7 @@ export class WeiboComCrawler extends Crawler {
   }
 }
 
-export class MWeiboCnCrawler extends Crawler {
+export class MWeiboCnCrawler extends DiamondCrawler {
   site = weiboCom;
   domains = ['m.weibo.cn'];
 
@@ -143,7 +143,7 @@ export class MWeiboCnCrawler extends Crawler {
   }
 }
 
-export class CardWeiboComCrawler extends Crawler {
+export class CardWeiboComCrawler extends DiamondCrawler {
   site = weiboCom;
   domains = ['card.weibo.com'];
 

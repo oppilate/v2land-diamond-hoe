@@ -1,7 +1,7 @@
-import { Crawler } from '@Types';
+import { DiamondCrawler } from '@Types';
 import initializeCrawlerManager from '../crawlerManager';
 
-export async function getCrawlerWithDomain(domain: string): Promise<Crawler> {
+export async function getCrawlerWithDomain(domain: string): Promise<DiamondCrawler> {
   if (typeof global.domainToCrawlerMap === 'undefined') {
     await initializeCrawlerManager(false);
   }
@@ -9,7 +9,7 @@ export async function getCrawlerWithDomain(domain: string): Promise<Crawler> {
   return global.domainToCrawlerMap[domain] || null;
 }
 
-export async function getCrawler(url: string): Promise<Crawler> {
+export async function getCrawler(url: string): Promise<DiamondCrawler> {
   const crawler = await getCrawlerWithDomain(url);
   if (crawler !== null) return crawler;
 

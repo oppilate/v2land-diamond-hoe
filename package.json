@@ -41,7 +41,7 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
-    "aws-sdk": "^2.596.0",
+    "aws-sdk": "^2.814.0",
     "chalk": "^3.0.0",
     "cli-progress": "^3.4.0",
     "delay": "^4.3.0",
